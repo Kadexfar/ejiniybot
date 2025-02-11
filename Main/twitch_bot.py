@@ -107,8 +107,8 @@ def connect():
 
     secure_sock.send(f"PASS {PASS}\r\n".encode('utf-8'))
     secure_sock.send(f"NICK {NICK}\r\n".encode('utf-8'))
-    secure_sock.send(f"JOIN {CHAN}\r\n".encode('utf-8'))
-    
+    secure_sock.send(f"JOIN #{CHAN}\r\n".encode('utf-8'))
+
     print(f"✅ Бот успешно зашел в канал {CHAN}.")
 
     return secure_sock
@@ -116,30 +116,22 @@ def connect():
 # Основной цикл для прослушивания сообщений
 def main():
     sock = connect()
-
     while True:
         try:
             data = sock.recv(1024).decode('utf-8')
-
-            # Убираем вывод "Received data" для серверных сообщений
-            if re.match(r"^:tmi.twitch.tv", data):
-                continue  # Пропускаем сообщения от сервера
-
-            print(f"Received data: {data}")
+            print("DEBUG: Received data:", data)  # Эта строка покажет все полученные данные
 
             if data.startswith("PING"):
                 sock.send("PONG :tmi.twitch.tv\r\n".encode('utf-8'))
-                print("PONG отправлен для поддержания соединения.")
+                print("DEBUG: Отправлен PONG.")
 
             if "PRIVMSG" in data:
                 handle_message(sock, data)
 
             time.sleep(0.1)
-
         except Exception as e:
             print(f"Ошибка: {e}")
             break
-
     sock.close()
 
 if __name__ == "__main__":

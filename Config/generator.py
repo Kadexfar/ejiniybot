@@ -1,4 +1,4 @@
-import os 
+import os
 import webbrowser
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -9,51 +9,23 @@ CONFIG_DIR = os.path.join(ROOT_DIR, "Config")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.py")
 
 # Замени на свой Client ID
-CLIENT_ID = 'gp762nuuoqcoxypju8c569th9wz7q5'
+CLIENT_ID = '8pet2l4yk0762h60s902ochjsajnad'
 
-# Все доступные права (scopes) для бота
+# Все доступные права (scopes) для бота (с максимальными правами)
 SCOPES = [
-    "analytics:read:extensions",
-    "analytics:read:games",
     "bits:read",
-    "channel:edit:commercial",
-    "channel:manage:broadcast",
-    "channel:manage:moderators",
-    "channel:manage:polls",
-    "channel:manage:predictions",
-    "channel:manage:redemptions",
-    "channel:manage:schedule",
-    "channel:manage:vips",
-    "channel:moderate",
-    "channel:read:charity",
-    "channel:read:editors",
-    "channel:read:goals",
-    "channel:read:hype_train",
-    "channel:read:polls",
-    "channel:read:predictions",
     "channel:read:redemptions",
-    "channel:read:subscriptions",
-    "clips:edit",
-    "moderation:read",
+    "channel:manage:redemptions",
+    "channel:moderate",
+    "chat:edit",
+    "chat:read",
+    "moderator:read:followers",
     "moderator:manage:announcements",
     "moderator:manage:banned_users",
-    "moderator:manage:chat_messages",
-    "moderator:manage:chat_settings",
-    "moderator:read:chatters",
-    "moderator:read:followers",
-    "user:edit",
-    "user:manage:blocked_users",
-    "user:manage:chat_color",
-    "user:read:blocked_users",
-    "user:read:broadcast",
-    "user:read:email",
-    "user:read:follows",
-    "user:read:subscriptions",
-    "whispers:read",
-    "whispers:edit"
+    "moderator:manage:chat_messages"
 ]
 
-# Генерация OAuth URL
+# Генерация OAuth URL с полными правами
 oauth_url = (
     f"https://id.twitch.tv/oauth2/authorize"
     f"?client_id={CLIENT_ID}"
