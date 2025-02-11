@@ -1,4 +1,4 @@
-import os
+import os 
 import webbrowser
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -9,21 +9,48 @@ CONFIG_DIR = os.path.join(ROOT_DIR, "Config")
 CONFIG_FILE = os.path.join(CONFIG_DIR, "config.py")
 
 # Замени на свой Client ID
-CLIENT_ID = '8pet2l4yk0762h60s902ochjsajnad'
+CLIENT_ID = 'gp762nuuoqcoxypju8c569th9wz7q5'
 
 # Все доступные права (scopes) для бота
 SCOPES = [
+    "analytics:read:extensions",
+    "analytics:read:games",
     "bits:read",
-    "channel:read:redemptions",
+    "channel:edit:commercial",
+    "channel:manage:broadcast",
+    "channel:manage:moderators",
+    "channel:manage:polls",
+    "channel:manage:predictions",
     "channel:manage:redemptions",
+    "channel:manage:schedule",
+    "channel:manage:vips",
     "channel:moderate",
-    "chat:edit",
-    "chat:read",
-    "moderator:read:followers",
+    "channel:read:charity",
+    "channel:read:editors",
+    "channel:read:goals",
+    "channel:read:hype_train",
+    "channel:read:polls",
+    "channel:read:predictions",
+    "channel:read:redemptions",
+    "channel:read:subscriptions",
+    "clips:edit",
+    "moderation:read",
     "moderator:manage:announcements",
     "moderator:manage:banned_users",
     "moderator:manage:chat_messages",
-    "user:read:email"
+    "moderator:manage:chat_settings",
+    "moderator:read:chatters",
+    "moderator:read:followers",
+    "user:edit",
+    "user:manage:blocked_users",
+    "user:manage:chat_color",
+    "user:read:blocked_users",
+    "user:read:broadcast",
+    "user:read:email",
+    "user:read:follows",
+    "user:read:subscriptions",
+    "whispers:read",
+    "whispers:edit"
 ]
 
 # Генерация OAuth URL
@@ -43,12 +70,10 @@ HTML_PAGE = """<!DOCTYPE html>
     <title>Получение Access Token</title>
     <script>
         window.onload = function() {
-            // Извлекаем access_token из URL
             const fragment = new URLSearchParams(window.location.hash.substring(1));
             const accessToken = fragment.get("access_token");
 
             if (accessToken) {
-                // Перенаправляем токен на сервер
                 window.location.href = "/token?access_token=" + accessToken;
             } else {
                 document.body.innerHTML = "<h1>Ошибка! Access Token не найден.</h1>";
@@ -65,15 +90,12 @@ HTML_PAGE = """<!DOCTYPE html>
 # Функция для сохранения токена в config.py
 def save_token_to_config(token):
     try:
-        # Проверка существования папки Config и создание её при необходимости
         if not os.path.exists(CONFIG_DIR):
             os.makedirs(CONFIG_DIR)
 
-        # Чтение файла config.py
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
             lines = f.readlines()
 
-        # Перезапись с токеном
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             updated = False
             for line in lines:
@@ -87,7 +109,6 @@ def save_token_to_config(token):
 
         print("✅ Токен успешно сохранен в Config/config.py!")
     except FileNotFoundError:
-        # Если файл не существует, создаём его
         with open(CONFIG_FILE, "w", encoding="utf-8") as f:
             f.write(f"PASS = 'oauth:{token}'\n")
         print("✅ Файл Config/config.py создан, токен сохранен!")
@@ -96,23 +117,17 @@ def save_token_to_config(token):
 class OAuthHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/token?access_token="):
-            # Извлекаем токен из URL
             token = self.path.split("access_token=")[-1].split("&")[0]
             print("\n✅ Получен access_token:", token)
 
-            # Сохраняем токен в config.py
             save_token_to_config(token)
 
-            # Отправляем HTML-ответ с перенаправлением на страницу бота
             self.send_response(302)
             self.send_header("Location", "http://localhost:5000")  # Адрес страницы бота
             self.end_headers()
 
-            # Завершаем сервер в отдельном потоке
             threading.Thread(target=self.server.shutdown).start()
-
         else:
-            # Отправляем HTML с JavaScript
             self.send_response(200)
             self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
@@ -123,11 +138,9 @@ def get_oauth_token():
     server = HTTPServer(("localhost", 8080), OAuthHandler)
     print("🌍 Локальный сервер запущен на http://localhost:8080")
 
-    # Открываем браузер
     webbrowser.open(oauth_url)
     print("🌐 Открываем браузер для авторизации...")
 
-    # Запускаем сервер (он завершится сам после получения токена)
     server.serve_forever()
 
 # Запускаем процесс получения токена

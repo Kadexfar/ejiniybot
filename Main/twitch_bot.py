@@ -53,13 +53,22 @@ def load_responses():
 def send_message(sock, message):
     sock.send(f"PRIVMSG {CHAN} :{message}\r\n".encode('utf-8'))
 
+# Функция для наложения таймаута
+def timeout_user(sock, username):
+    """С шансом 5% накладывает таймаут 10 секунд на пользователя."""
+    if random.randint(1, 100) <= 101:  # 5% шанс
+        timeout_command = f"PRIVMSG {CHAN} :.timeout {username} 10\r\n"
+        print(f"Отправляю команду: {timeout_command.strip()}")  # Вывод в консоль
+        sock.send(timeout_command.encode('utf-8'))
+        return True
+    return False
+
 # Функция обработки сообщений
 def handle_message(sock, raw_message):
-    try:
-        if "PRIVMSG" in raw_message:
+    if "PRIVMSG" in raw_message:
+        try:
             parts = raw_message.split(":", 2)
             if len(parts) < 3:
-                print("Ошибка: не удалось разобрать сообщение.")
                 return
 
             username = parts[1].split("!")[0]
@@ -67,27 +76,25 @@ def handle_message(sock, raw_message):
 
             print(f"{username}: {message_content}")
 
-            # Загружаем список запрещенных слов и другие данные
+            # Загружаем команды и запрещенные слова
+            commands = load_commands()
             blacklist = load_blacklist()
-            responses = load_responses()
 
-            # Проверяем запрещенные слова (ищем часть слова в сообщении)
+            # Проверяем команды
+            if message_content in commands:
+                response = commands[message_content].replace("{user}", username)
+                send_message(sock, response)
+                print(f"Бот ответил: {response}")
+
+            # Проверяем запрещенные слова
             for bad_word in blacklist:
-                if bad_word in message_content:  # Проверяем, есть ли слово как часть другого слова
-                    if random.random() < 0.05:  # 5% шанс на тайм-аут
-                        sock.send(f"PRIVMSG {CHAN} :/timeout {username} 10\r\n".encode('utf-8'))
-                        print(f"Бот наложил тайм-аут на {username} за слово: {bad_word}")
-                    break  # Останавливаем обработку, если слово найдено, чтобы не отправлять ответ
-            else:
-                # Если запрещенное слово не найдено, проверяем команды
-                commands = load_commands()
-                if message_content in commands:
-                    response = commands[message_content].replace("{user}", username)
-                    send_message(sock, response)
-                    print(f"Бот ответил: {response}")
+                if bad_word in message_content:
+                    if timeout_user(sock, username):  # Если наложен таймаут, бот молчит
+                        print(f"Бот наложил таймаут на {username} за слово: {bad_word}")
+                    break  # Останавливаем проверку после первого найденного слова
 
-    except IndexError as e:
-        print(f"Ошибка при разборе сообщения: {e}")
+        except IndexError as e:
+            print(f"Ошибка при разборе сообщения: {e}")
 
 # Подключение к Twitch IRC
 def connect():
