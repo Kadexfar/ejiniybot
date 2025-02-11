@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить запрещенное слово{% endblock %}
+
+{% block content %}
+    <h1>Добавить запрещенное слово:</h1>
+    <form action="{{ url_for('add_blacklist_word_page') }}" method="POST">
+        <input type="text" name="word" placeholder="Введите запрещенное слово" required>
+        <button type="submit">Добавить слово</button>
+    </form>
+{% endblock %}

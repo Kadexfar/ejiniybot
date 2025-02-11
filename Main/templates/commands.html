@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Список команд{% endblock %}
+
+{% block content %}
+    <h1>Список команд:</h1>
+    <form action="{{ url_for('remove_multiple_commands') }}" method="post">
+        <ul>
+            <li><input type="checkbox" id="select_all_commands" onclick="toggleAllCommands()"> Выбрать все</li>
+            {% for command in commands %}
+            <li>
+                <input type="checkbox" name="commands_to_remove" value="{{ command }}">
+                {{ command }}
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Удалить выбранные команды</button>
+    </form>
+
+    <script>
+        function toggleAllCommands() {
+            var checkboxes = document.getElementsByName("commands_to_remove");
+            var selectAll = document.getElementById("select_all_commands");
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+    </script>
+{% endblock %}

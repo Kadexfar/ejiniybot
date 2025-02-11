@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить команду{% endblock %}
+
+{% block content %}
+    <h1>Добавить команду:</h1>
+    <form action="{{ url_for('add_command_page') }}" method="POST">
+        <input type="text" name="command" placeholder="Введите команду" required>
+        <input type="text" name="response" placeholder="Введите ответ" required>
+        <button type="submit">Добавить команду</button>
+    </form>
+{% endblock %}

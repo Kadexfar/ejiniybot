@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Список запрещенных слов{% endblock %}
+
+{% block content %}
+    <h1>Запрещенные слова:</h1>
+    <form action="{{ url_for('remove_multiple_blacklist_words') }}" method="post">
+        <ul>
+            <li><input type="checkbox" id="select_all_blacklist" onclick="toggleAllBlacklist()"> Выбрать все</li>
+            {% for word in blacklist %}
+            <li>
+                <input type="checkbox" name="blacklist_to_remove" value="{{ word }}">
+                {{ word }}
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit">Удалить выбранные слова</button>
+    </form>
+
+    <script>
+        function toggleAllBlacklist() {
+            var checkboxes = document.getElementsByName("blacklist_to_remove");
+            var selectAll = document.getElementById("select_all_blacklist");
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+    </script>
+{% endblock %}

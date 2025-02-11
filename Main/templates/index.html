@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница бота</title>
+    <style>
+        #blacklist {
+            display: none;
+        }
+        .button-container {
+            margin-bottom: 20px;
+        }
+        .button-container a {
+            margin-right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button-container a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <a href="{{ url_for('add_command_page') }}">Добавить команду</a>
+        <a href="{{ url_for('add_blacklist_word_page') }}">Добавить запрещенное слово</a>
+        <a href="{{ url_for('commands_page') }}">Список команд</a>
+        <a href="{{ url_for('blacklist_page') }}">Список запрещенных слов</a>
+    </div>
+
+    <h1>Страница бота</h1>
+    <p>Перейдите к соответствующим страницам, чтобы управлять командами и запрещенными словами.</p>
+</body>
+</html>
